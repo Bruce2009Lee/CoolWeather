@@ -10,7 +10,8 @@ public class Province {
 
     private String provinceName;
 
-    private String proviceCode;
+    private String provinceCode;
+
 
     public int getId() {
         return id;
@@ -28,11 +29,11 @@ public class Province {
         this.provinceName = provinceName;
     }
 
-    public String getProviceCode() {
-        return proviceCode;
+    public String getProvinceCode() {
+        return provinceCode;
     }
 
-    public void setProviceCode(String proviceCode) {
-        this.proviceCode = proviceCode;
+    public void setProvinceCode(String provinceCode) {
+        this.provinceCode = provinceCode;
     }
 }
