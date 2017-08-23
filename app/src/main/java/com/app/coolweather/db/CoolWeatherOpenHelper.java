@@ -15,7 +15,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
      * sentence to create provice table
      */
     public static final String CREATE_PROVINCE = "create table Province ("
-            + "in integer primary key autoincrement,"
+            + "id integer primary key autoincrement,"
             + "province_name text,"
             + "province_code text)";
 
@@ -25,7 +25,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
      * sentence to create city table
      */
     public static final String CREATE_CITY = "create table  City ("
-            + "in integer primary key autoincrement,"
+            + "id integer primary key autoincrement,"
             + "city_name text,"
             + "city_code text,"
             + "provice_id integer)";
@@ -35,7 +35,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
      * sentence to create country table
      */
     public static final String CREATE_COUNTRY = "create table  Country ("
-            + "in integer primary key autoincrement,"
+            + "id integer primary key autoincrement,"
             + "country_name text,"
             + "country_code text,"
             + "city_id integer)";
