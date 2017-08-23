@@ -3,6 +3,7 @@ package com.app.coolweather.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by Administrator on 2017/8/21.
@@ -28,7 +29,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
             + "id integer primary key autoincrement,"
             + "city_name text,"
             + "city_code text,"
-            + "provice_id integer)";
+            + "province_id integer)";
 
     /**
      *
@@ -50,6 +51,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_PROVINCE);
         db.execSQL(CREATE_CITY);
         db.execSQL(CREATE_COUNTRY);
+        Log.d("CWOpenHelper111","in excuteSQL");
     }
 
     @Override

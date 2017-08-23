@@ -5,7 +5,9 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -86,6 +88,7 @@ public class ChooseActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
 
         listView = (ListView) findViewById(R.id.list_view);
@@ -94,14 +97,16 @@ public class ChooseActivity extends Activity {
         adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,datalist);
         listView.setAdapter(adapter);
 
-        coolWeatherDB = coolWeatherDB.getInstance(this);
+        coolWeatherDB = CoolWeatherDB.getInstance(this);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (currentLevel == LEVEL_PROVINCE){
+                if (currentLevel == LEVEL_PROVINCE) {
                     selectedProvince = provinceList.get(position);
-                    queryCitys();
+                    queryCities();
+                }else if (currentLevel == LEVEL_COUNTRY){
+                    queryCountries();
                 }
             }
         });
@@ -110,6 +115,7 @@ public class ChooseActivity extends Activity {
     }
 
     private void queryProvinces(){
+        Log.d("queryProvinces","in queryProvinces");
         provinceList = coolWeatherDB.loadProvince();
         if (provinceList.size() > 0 ){
             datalist.clear();
@@ -120,10 +126,12 @@ public class ChooseActivity extends Activity {
             listView.setSelection(0);
             titleText.setText("中国");
             currentLevel = LEVEL_PROVINCE;
+        }else {
+            queryFromServer(null,"province");
         }
     }
 
-    private void queryCitys(){
+    private void queryCities(){
         cityList = coolWeatherDB.loadCities(selectedProvince.getId());
         if (cityList.size() > 0 ){
             datalist.clear();
@@ -186,7 +194,7 @@ public class ChooseActivity extends Activity {
                             if ("province".equals(type)){
                                 queryProvinces();
                             }else if ("city".equals(type)){
-                                queryCitys();
+                                queryCities();
                             }else if ("country".equals(type)){
                                 queryCountries();
                             }
@@ -229,7 +237,7 @@ public class ChooseActivity extends Activity {
     public void onBackPressed() {
 
         if (currentLevel == LEVEL_COUNTRY){
-            queryCitys();
+            queryCities();
         }else if (currentLevel == LEVEL_CITY){
             queryProvinces();
         }else {
