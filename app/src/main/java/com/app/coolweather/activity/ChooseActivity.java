@@ -2,7 +2,10 @@ package com.app.coolweather.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -88,8 +91,19 @@ public class ChooseActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //this must before setContentView.
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
+
+
+        //sharedPreference
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (preferences.getBoolean("city_selected",false)){
+            Intent intent = new Intent(this,WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
 
         listView = (ListView) findViewById(R.id.list_view);
         titleText = (TextView) findViewById(R.id.title_text);
@@ -105,8 +119,15 @@ public class ChooseActivity extends Activity {
                 if (currentLevel == LEVEL_PROVINCE) {
                     selectedProvince = provinceList.get(position);
                     queryCities();
-                }else if (currentLevel == LEVEL_COUNTRY){
+                }else if (currentLevel == LEVEL_CITY){
+                    selectedCity = cityList.get(position);
                     queryCountries();
+                }else if (currentLevel == LEVEL_COUNTRY){
+                    String countryCode = countryList.get(position).getCountryCode();
+                    Intent intent = new Intent(ChooseActivity.this,WeatherActivity.class);
+                    intent.putExtra("country_code",countryCode);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
@@ -148,6 +169,10 @@ public class ChooseActivity extends Activity {
 
     }
 
+    /**
+     *
+     * check the countries of selected city,first in the DB,if not found check through the server
+     */
     private void queryCountries(){
         countryList = coolWeatherDB.loadCounties(selectedCity.getId());
         if (countryList.size() > 0 ){
@@ -157,13 +182,19 @@ public class ChooseActivity extends Activity {
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
-            titleText.setText(selectedCountry.getCountryName());
+            titleText.setText(selectedCity.getCityName());
             currentLevel = LEVEL_COUNTRY;
         }else {
             queryFromServer(selectedCity.getCityCode(),"country");
         }
     }
 
+    /**
+     *
+     * query data from server
+     * @param code:provinceID or cityID or countryID
+     * @param type:
+     */
     private void queryFromServer(final String code,final String type){
         String address;
         if (!TextUtils.isEmpty(code)){
@@ -175,6 +206,11 @@ public class ChooseActivity extends Activity {
         showProgressDialog();
 
         HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
+            @Override
+            public int hashCode() {
+                return super.hashCode();
+            }
+
             @Override
             public void onFinish(String response) {
                 boolean result = false;
@@ -245,26 +281,3 @@ public class ChooseActivity extends Activity {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

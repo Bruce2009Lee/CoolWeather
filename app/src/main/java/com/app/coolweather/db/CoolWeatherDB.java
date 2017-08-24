@@ -136,8 +136,8 @@ public class CoolWeatherDB {
     public void saveCountry(Country country){
         if (country != null){
             ContentValues values = new ContentValues();
-            values.put("content_name",country.getCountryName());
-            values.put("content_code",country.getCountryCode());
+            values.put("country_name",country.getCountryName());
+            values.put("country_code",country.getCountryCode());
             values.put("city_id",country.getCityId());
             db.insert("Country",null,values);
             
@@ -147,9 +147,9 @@ public class CoolWeatherDB {
     public List<Country> loadCounties(int cityId){
         
         List<Country> list = new ArrayList<Country>();
-        Cursor cursor = db.query("Country",null,"city_id",new String[]{String.valueOf(cityId)},null,null,null);
+        Cursor cursor = db.query("Country",null,"city_id = ?",new String[]{String.valueOf(cityId)},null,null,null);
 
-        if (cursor != null){
+        if (cursor.moveToFirst()){
             do {
 
                 Country country = new Country();
