@@ -88,6 +88,8 @@ public class ChooseActivity extends Activity {
     private int currentLevel;
 
 
+    private boolean isFromWeatherActivity;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,9 +98,10 @@ public class ChooseActivity extends Activity {
         setContentView(R.layout.choose_area);
 
 
+        isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity",false);
         //sharedPreference
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (preferences.getBoolean("city_selected",false)){
+        if (preferences.getBoolean("city_selected",false) && !isFromWeatherActivity){
             Intent intent = new Intent(this,WeatherActivity.class);
             startActivity(intent);
             finish();
@@ -113,6 +116,8 @@ public class ChooseActivity extends Activity {
 
         coolWeatherDB = CoolWeatherDB.getInstance(this);
 
+
+        //此步骤是异步事件，当有点击事件才会执行
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -136,7 +141,7 @@ public class ChooseActivity extends Activity {
     }
 
     private void queryProvinces(){
-        Log.d("queryProvinces","in queryProvinces");
+        Log.d("queryProvinces111","in queryProvinces");
         provinceList = coolWeatherDB.loadProvince();
         if (provinceList.size() > 0 ){
             datalist.clear();
@@ -191,7 +196,7 @@ public class ChooseActivity extends Activity {
 
     /**
      *
-     * query data from server
+     * query data from server with code of city
      * @param code:provinceID or cityID or countryID
      * @param type:
      */
@@ -277,6 +282,10 @@ public class ChooseActivity extends Activity {
         }else if (currentLevel == LEVEL_CITY){
             queryProvinces();
         }else {
+            if (isFromWeatherActivity){
+                Intent intent = new Intent(this,WeatherActivity.class);
+                startActivity(intent);
+            }
             finish();
         }
     }
